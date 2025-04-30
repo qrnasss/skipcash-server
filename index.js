@@ -1,19 +1,24 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-
 const app = express();
-app.use(cors());
+
+// تكوين CORS للسماح بالوصول من الواجهة الأمامية
+app.use(cors({
+  origin: '*',  // للتطوير، استخدم '*' للسماح بالوصول من أي مصدر
+  // في بيئة الإنتاج، حدد النطاقات المسموح بها:
+  // origin: ['https://your-frontend-app.com', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true // مهم إذا كنت تستخدم الكوكيز
+}));
+
+// تمكين معالجة JSON
 app.use(express.json());
 
-// استدعاء الراوت من ملف خارجي
-const skipcashRoutes = require('./routes/skipcash');
-app.use('/api/skipcash', skipcashRoutes);
+// ... باقي إعدادات التطبيق والمسارات ...
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({ message: 'Skipcash API Server is running!' });
+// تشغيل الخادم
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`الخادم يعمل على المنفذ ${PORT}`);
 });
-
-const PORT = process.env.PORT || 5100;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
